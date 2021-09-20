@@ -3,6 +3,7 @@ from myapi.models import User
 from django.views.decorators.csrf import csrf_exempt
 import json
 from neo4j import GraphDatabase
+import sys
 
 def getUser(request,username):
     if request.method == 'GET':
@@ -58,14 +59,15 @@ def getAllUsers(request):
 def deleteAllUsers(request):
     if request.method == 'GET':
         uri = "neo4j://localhost:7687"
-        driver = GraphDatabase.driver(uri, auth=("neo4j", "neo4j"))
+        driver = GraphDatabase.driver(uri, auth=("neo4j", "db2"))
         try:
-            def create_friend_of(tx, name, friend):
-                tx.run("MATCH (a:Person) WHERE a.name = $name "
-                       "CREATE (a)-[:KNOWS]->(:Person {name: $friend})",
-                       name=name, friend=friend)
+            with driver.session() as session:
+                session.write_transaction(delete_all_users)
             response = {"ok":"all good"}
             return JsonResponse(response, safe=False)
         except:
-            response = {"error": "Error occurred"}
+            response = {"error": "Error occurred"+str(sys.exc_info()[0])}
             return JsonResponse(response, safe=False)
+
+def delete_all_users(tx):
+        tx.run("MATCH (n: User) DELETE n ")
