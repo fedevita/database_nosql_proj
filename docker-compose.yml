@@ -28,4 +28,16 @@ services:
     volumes:
       - ./db-cassandra/data:/var/lib/cassandra    # This is the volume that will persist data for cass1 node
     #  - ./db-cassandra/etc:/etc/cassandra   # Use your own config files for full control
-
+  db:
+    image: mysql:8
+    container_name: mysql
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./mysql/db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
