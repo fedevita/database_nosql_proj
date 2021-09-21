@@ -1,43 +1,44 @@
 version: "3"
 services:
-  neo4j:
-    image: neo4j:enterprise
-    container_name: neo4j
-    restart: unless-stopped
+  sql-server-db:
+    container_name: sql-server-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
     ports:
-      - 7474:7474
-      - 7687:7687
+      - "1433:1433"
     volumes:
-      - ./db-neo4j/conf:/conf
-      - ./db-neo4j/data:/data
-      - ./db-neo4j/import:/import
-      - ./db-neo4j/logs:/logs
-      - ./db-neo4j/plugins:/plugins
+      - ./sqlserver/data:/var/opt/mssql/data 
+      - ./sqlserver/log:/var/opt/mssql/log 
+      - ./sqlserver/secrets:/var/opt/mssql/secrets 
     environment:
-      # Raise memory limits
-      - NEO4J_dbms_memory_pagecache_size=2G
-      - NEO4J_dbms.memory.heap.initial_size=2G
-      - NEO4J_dbms_memory_heap_max__size=2G
-      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
-  cassandra:
-    image: cassandra   # better to use a specific version, if you want to control upgrades
-    container_name: cassandra
-    mem_limit: 2g  # It's not strictly required, but it's better to have some memory limit
-    ports:
-      - "9042:9042"  # Expose native binary CQL port for your apps
-    volumes:
-      - ./db-cassandra/data:/var/lib/cassandra    # This is the volume that will persist data for cass1 node
-    #  - ./db-cassandra/etc:/etc/cassandra   # Use your own config files for full control
-  db:
-    image: mysql:8
-    container_name: mysql
-    ports:
-      - "3310:3306"
-    volumes:
-      - ./mysql/db_data:/var/lib/mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
+      SA_PASSWORD: "change_this_password"
+      ACCEPT_EULA: "Y"
+#  neo4j:
+#    image: neo4j:enterprise
+#    container_name: neo4j
+#    restart: unless-stopped
+#    ports:
+#      - 7474:7474
+#      - 7687:7687
+#    volumes:
+#      - ./db-neo4j/conf:/conf
+#      - ./db-neo4j/data:/data
+#      - ./db-neo4j/import:/import
+#      - ./db-neo4j/logs:/logs
+#      - ./db-neo4j/plugins:/plugins
+#    environment:
+#      # Raise memory limits
+#      - NEO4J_dbms_memory_pagecache_size=2G
+#      - NEO4J_dbms.memory.heap.initial_size=2G
+#      - NEO4J_dbms_memory_heap_max__size=2G
+#      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+#  cassandra:
+#    image: cassandra   # better to use a specific version, if you want to control upgrades
+#    container_name: cassandra
+#    mem_limit: 2g  # It's not strictly required, but it's better to have some memory limit
+#    ports:
+#      - "9042:9042"  # Expose native binary CQL port for your apps
+#    volumes:
+#      - ./db-cassandra/data:/var/lib/cassandra    # This is the volume that will persist data for cass1 node
+#    #  - ./db-cassandra/etc:/etc/cassandra   # Use your own config files for full control
+
