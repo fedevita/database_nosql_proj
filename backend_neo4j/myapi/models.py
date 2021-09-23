@@ -25,6 +25,12 @@ class Person(StructuredNode):
     is_pep = IntegerProperty(index=True, default=0)
     password = StringProperty(index=True)
 
+class Bank_account(StructuredNode):
+    uid = UniqueIdProperty()
+    iban = StringProperty(unique_index=True)
+    owner_id = StringProperty(index=True)
+    balance = IntegerProperty(index=True, default=0.00)
+
 #class User(StructuredNode):
 #    username = StringProperty(index=True)
 #    password = StringProperty(index=True)

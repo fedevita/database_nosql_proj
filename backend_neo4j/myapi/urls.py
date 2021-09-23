@@ -14,5 +14,9 @@ urlpatterns = [
     #path('deleteAllUsers',deleteAllUsers),
     path('writePersons',writePersons),
     path('deletePersons',deletePersons),
+    path('writeBankAccounts',writeBankAccounts),
+    path('deleteBankAccounts',deleteBankAccounts),
+    path('createPersonsOwns',createPersonsOwns),
+    
 ]
 

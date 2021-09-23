@@ -3,6 +3,8 @@ from myapi.models import Person
 from django.views.decorators.csrf import csrf_exempt
 import json
 from neomodel import db
+from py2neo import Graph
+from py2neo.bulk import create_nodes
 
 def getAllPersons(request):
     if request.method == 'GET':
@@ -33,15 +35,16 @@ def getAllPersons(request):
 
 def writePersons(request):
     response=[]
-    with open('/home/federico/db2-project/expdata.json', 'r') as f:
-        i=0
+    with open('/home/federico/db2-project/dataset/person.json', 'r') as f:
+        g = Graph("bolt://localhost:7687", auth=("neo4j", "db2"))
         my_json_obj = json.load(f)
         response={"ok": ":)"}
         try:
-          with db.transaction:
-              for person in my_json_obj :
-                people = Person.create(person)
-              #people = Person.create({"id":"00096ecb-a6e6-4265-9b65-fa9af11a1bfa","first_name":"Cammy","last_name":"Wauchope","email":"cwauchopell@usda.gov","gender":"Genderqueer","address":"040 Algoma Circle","phone":"327 419 9945","country":"France","country_code":"FR","bank_id":"","is_pep":"0","password":"24fc1047d32d89ecc7e0a3f798668f33c59b202bedfb6dfcde7a50928a81964b"})
+          create_nodes(g.auto(), my_json_obj, labels={"Person"})
+          #with db.transaction:     
+          #    #for person in my_json_obj :
+          #    #  people = Person.create(person)
+          #    #people = Person.create({"id":"00096ecb-a6e6-4265-9b65-fa9af11a1bfa","first_name":"Cammy","last_name":"Wauchope","email":"cwauchopell@usda.gov","gender":"Genderqueer","address":"040 Algoma Circle","phone":"327 419 9945","country":"France","country_code":"FR","bank_id":"","is_pep":"0","password":"24fc1047d32d89ecc7e0a3f798668f33c59b202bedfb6dfcde7a50928a81964b"})
         except Exception as e:
             response = {"error": "Error occurred in  " + str(e)}
             return JsonResponse(response, safe=False)
@@ -49,17 +52,35 @@ def writePersons(request):
 
 def deletePersons(request):
     if request.method == 'GET':
+        
         try:
-            persons = Person.nodes.all()
-            response = []
-            for person in persons :
-                person.delete()
+            #persons = Person.nodes.all()
+            #response = []
+            #for person in persons :
+            #    person.delete()
+            graph = Graph("bolt://localhost:7687", auth=("neo4j", "db2"))
+            graph.run("MATCH (n:Person) DETACH DELETE n")
             response = {"success": "Persons deleted"}
             return JsonResponse(response, safe=False)
-        except:
-            response = {"error": "Error occurred"}
+        except Exception as e:
+            response = {"error": "Error occurred in  " + str(e)}
             return JsonResponse(response, safe=False)
 
+def createPersonsOwns(request):
+    if request.method == 'GET':
+        
+        try:
+            #persons = Person.nodes.all()
+            #response = []
+            #for person in persons :
+            #    person.delete()
+            graph = Graph("bolt://localhost:7687", auth=("neo4j", "db2"))
+            graph.run("MATCH (p:Person), (b:Bank_account) WHERE p.id = b.owner_id CREATE (p)-[o:OWNS]->(b) RETURN type(o)")
+            response = {"success": "created owns relationship"}
+            return JsonResponse(response, safe=False)
+        except Exception as e:
+            response = {"error": "Error occurred in  " + str(e)}
+            return JsonResponse(response, safe=False)
 
 
 
