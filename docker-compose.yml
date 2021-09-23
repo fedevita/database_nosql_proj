@@ -1,18 +1,18 @@
 version: "3"
 services:
-  sql-server-db:
-    container_name: sql-server-db
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    user: root
-    ports:
-      - "1433:1433"
-    volumes:
-      - ./sqlserver/data:/var/opt/mssql/data 
-      - ./sqlserver/log:/var/opt/mssql/log 
-      - ./sqlserver/secrets:/var/opt/mssql/secrets 
-    environment:
-      SA_PASSWORD: "change_this_password"
-      ACCEPT_EULA: "Y"
+#  sql-server-db:
+#    container_name: sql-server-db
+#    image: mcr.microsoft.com/mssql/server:2019-latest
+#    user: root
+#    ports:
+#      - "1433:1433"
+#    volumes:
+#      - ./sqlserver/data:/var/opt/mssql/data 
+#      - ./sqlserver/log:/var/opt/mssql/log 
+#      - ./sqlserver/secrets:/var/opt/mssql/secrets 
+#    environment:
+#      SA_PASSWORD: "change_this_password"
+#      ACCEPT_EULA: "Y"
   neo4j:
     image: neo4j:enterprise
     container_name: neo4j
