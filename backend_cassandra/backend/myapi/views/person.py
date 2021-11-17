@@ -10,6 +10,7 @@ from cassandra.query import (PreparedStatement, BoundStatement, SimpleStatement,
                              BatchStatement, BatchType, dict_factory, TraceUnavailable)
 from cassandra.cluster import Cluster
 
+
 def getPerson(request,username):
     cluster = Cluster(protocol_version = 3)
     session = cluster.connect()
